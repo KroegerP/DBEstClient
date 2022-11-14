@@ -45,13 +45,13 @@ class TestParser(unittest.TestCase):
             types.append(self.parser.get_query_type())
         self.assertEqual(types, ["set", "create", "select", "drop"])
 
-    # def test_query_type_create(self):
-    #     sql = "create table ss40g_1(ss_sales_price real, ss_sold_date_sk real, ss_coupon_amt categorical) from '/data/tpcds/40G/ss_600k.csv' GROUP BY ss_store_sk method uniform size 60000 scale data num_of_points2.csv"
-    #     self.assertEqual(1, 1)
+    def test_query_type_create(self):
+        sql = "create table ss40g_1(ss_sales_price real, ss_sold_date_sk real, ss_coupon_amt categorical) from '/data/tpcds/40G/ss_600k.csv' GROUP BY ss_store_sk method uniform size 60000 scale data num_of_points2.csv"
+        self.assertEqual(1, 1)
 
-    # def test_query_type_select(self):
-    #     sql = "select avg(ss_sales_price)  from ss40g_1 where ss_sold_date_sk between 2451119  and 2451483 and ss_coupon_amt=''  group by ss_store_sk"
-    #     self.assertEqual(1, 1)
+    def test_query_type_select(self):
+        sql = "select avg(ss_sales_price)  from ss40g_1 where ss_sold_date_sk between 2451119  and 2451483 and ss_coupon_amt=''  group by ss_store_sk"
+        self.assertEqual(1, 1)
 
     def test_drop_get_model(self):
         """Test DROP query"""
@@ -113,6 +113,7 @@ class TestParser(unittest.TestCase):
         )
 
     def test_ddl_get_y(self):
+        print('---------------------test_ddl_get_y')
         """get the attribute which is aggregated."""
         sql1 = "create table mdl(y categorical distinct, x0 real, x2 categorical, x3 categorical) from tbl group by z method uniform size '/data/haha.csv'"
         sql2 = "create table mdl(y categorical, x2 categorical) from tbl group by z method uniform size '/data/haha.csv'"
@@ -134,6 +135,7 @@ class TestParser(unittest.TestCase):
         )
 
     def test_ddl_get_x(self):
+        print("-------------------test_ddl_get_x")
         sql1 = "create table mdl(y categorical distinct, x0 real, x2 categorical, x3 categorical) from tbl group by z method uniform size '/data/haha.csv'"
         sql2 = "create table mdl(y categorical, x2 categorical) from tbl group by z method uniform size '/data/haha.csv'"
         sql3 = "create table mdl(y categorical distinct) from tbl group by z method uniform size '/data/haha.csv'"
@@ -142,8 +144,9 @@ class TestParser(unittest.TestCase):
         for sql in sqls:
             self.parser.parse(sql)
             sizes.append(list(self.parser.get_x()))
-        #     print(list(self.parser.get_x()))
-        # print("sizes", sizes)
+            print(list(self.parser.get_x()))
+        print("sizes", sizes)
+        # REAL X VARS IN 1ST ARRAY, CATEGORICAL IN SECOND
         self.assertEqual(sizes, [[["x0"], ["x2", "x3"]], [[], ["x2"]], [[], []]])
 
     def test_parse_usecols_shared(self):

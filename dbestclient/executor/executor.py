@@ -131,6 +131,8 @@ class SqlExecutor:
                     self.config = DbestConfig()
                 # DDL, create the model as requested
                 mdl = self.parser.get_ddl_model_name()
+                # print("GETTING MDL NAME:")
+                # print(mdl)
                 tbl = self.parser.get_from_name()
 
                 # remove unnecessary charactor '
@@ -767,9 +769,15 @@ class SqlExecutor:
                     ):
                         print("Model " + mdl + " does not exist.")
                         return
+                    # Basically what I think is happening is it's either choosing the incorrect .dill file or it's the tables are being created incorrectly
+                    print("MODEL CATALOG")
+                    my_catalog = [print(x) for x in self.model_catalog.model_catalog]
+                    print(mdl)
+                    print(self.runtime_config["model_suffix"])
                     model = self.model_catalog.model_catalog[
                         mdl + self.runtime_config["model_suffix"]
                     ]
+                    print(model.__class__.__name__)
                     x_header_density = model.density_column
 
                     [x_lb, x_ub] = [
@@ -826,7 +834,7 @@ class SqlExecutor:
 
                 if self.runtime_config["b_print_to_screen"]:
                     # print(predictions.to_csv(sep=',', index=False))  # sep='\t'
-                    print(predictions.to_string(index=False))  # max_rows=5
+                    print(str(predictions))  # max_rows=5
 
                 if self.runtime_config["result2file"]:
                     predictions.to_csv(self.runtime_config["result2file"],header=False, sep=',', index=False, quoting=csv.QUOTE_NONE, quotechar="",  escapechar=" ")

@@ -288,7 +288,7 @@ class GenericMdn:
 class RegMdnGroupBy:
     """This class implements the regression using mixture density network for group by queries."""
 
-    def __init__(self, config, b_normalize_data=True):
+    def __init__(self, config, b_store_training_data=False, b_normalize_data=True):
         # if b_store_training_data:
         self.x_points = None  # query range
         self.y_points = None  # aggregate value
@@ -307,7 +307,7 @@ class RegMdnGroupBy:
         self.last_sigma = None
         self.config = config
         self.b_normalize_data = b_normalize_data
-        self.b_store_training_data=False
+        self.b_store_training_data=b_store_training_data
         self.enc = None
 
     def fit(
@@ -360,8 +360,9 @@ class RegMdnGroupBy:
                 zs_encoded = self.enc.fit_transform(z_group).to_numpy()
             elif encoder == "embedding":
                 # from datetime import datetime
-                # print("start the columns2sentences process")
-
+                print("start the columns2sentences process")
+                # [print("x_points",x) for x in x_points]
+                # [print("y_points",x) for x in y_points]
                 if USE_SKIP_GRAM:
                     self.enc = SkipGram().fit(
                         z_group, x_points, y_points, usecols=usecols,dim=self.config.config["n_embedding_dim"],NG=len(z_group[0]),

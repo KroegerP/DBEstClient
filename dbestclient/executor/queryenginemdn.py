@@ -1051,7 +1051,7 @@ class MdnQueryEngineGoGs():
         runtime_config["b_print_to_screen"] = b_print_to_screen
         if b_print_to_screen:
             for key in predictions:
-                print(key + "," + str(predictions[key]))
+                print(str(key) + "," + str(predictions[key]))
         if result2file is not None:
             # print(predictions)
             with open(result2file, 'w') as f:

@@ -244,13 +244,14 @@ class DBEstParser:
         return False
 
     def get_ddl_model_name(self):
-        for item in self.parsed.tokens:
-            if item.ttype is None and "(" in item.value.lower():
+        # [print(x.ttype) for x in self.parsed.tokens]
+        for index, item in enumerate(self.parsed.tokens):
+            if item.ttype is None and str(self.parsed.tokens[index - 1].ttype) == "Token.Text.Whitespace":
                 return item.tokens[0].value
 
     def get_y(self):
-        item = self.parsed.tokens[4].value
-        # print("item", item)
+        item = self.parsed.tokens[5].value
+        print("item", item)
         try:
             index_comma = item.index(",")
             item = item[:index_comma]
@@ -259,30 +260,31 @@ class DBEstParser:
         y_list = (
             item.lower().replace("(", " ").replace(")", " ").replace(",", " ").split()
         )
+        print("y_list", y_list)
         # print("y_list", y_list)
-        # print("y_list", y_list)
-        if y_list[2] not in ["real", "categorical"]:
-            raise TypeError("Unsupported type for " + y_list[1] + " -> " + y_list[2])
+        if y_list[1] not in ["real", "categorical"]:
+            raise TypeError("Unsupported type for " + y_list[0] + " -> " + y_list[1])
         # if item.ttype is None and "(" in item.value.lower():
         #     y_list = item.tokens[1].value.lower().replace(
         #         "(", "").replace(")", "").replace(",", " ").split()
         #     if y_list[1] not in ["real", "categorical"]:
         #         raise TypeError("Unsupported type for " +
         #                         y_list[0] + " -> " + y_list[1])
-        if len(y_list) == 4:
-            return [y_list[1], y_list[2], y_list[3]]
+        if len(y_list) == 3:
+            return [y_list[0], y_list[1], y_list[2]]
         else:
-            return [y_list[1], y_list[2], None]
+            return [y_list[0], y_list[1], None]
 
         # return item.tokens[1].tokens[1].value, item.tokens[1].tokens[3].value
 
     def get_x(self):
-        item = self.parsed.tokens[4].value
+        item = self.parsed.tokens[5].value
         # print("item ", item)
         try:
             index_comma = item.index(",")
             item = item[index_comma + 1 :]
         except ValueError:
+            return [], []
             pass
 
         x_list = (
@@ -302,8 +304,8 @@ class DBEstParser:
                 "Only one continous independent variable is supported at "
                 "this moment, please modify your SQL query accordingly."
             )
-        # print("continous,", continous)
-        # print("categorical,", categorical)
+        print("continous,", continous)
+        print("categorical,", categorical)
         return continous, categorical
 
     def get_from_name(self):

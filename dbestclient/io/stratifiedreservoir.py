@@ -267,6 +267,9 @@ class StratifiedReservoir:
             from multiprocessing import Pool as PoolCPU
 
             print("parallel sampling is only available in linux.")
+            # Cannot find the filepath specified
+            self.file_name = "../" + self.file_name
+            print(self.file_name)
             line_num = int(
                 subprocess.check_output(["wc", "-l", self.file_name]).split()[0]
             )

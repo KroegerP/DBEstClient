@@ -112,16 +112,18 @@ class SkipGram:
         workers = multiprocessing.cpu_count() if workers == -1 else 1
         model = Word2Vec(
             sentences,
-            size=int(self.dim / NG),
+            vector_size=int(self.dim / NG),
             window=window,
             min_count=min_count,
             negative=negative,
-            iter=iters,
+            epochs=iters,
             workers=workers,
         )
 
         # word_vectors = model.wv  # Matix of model
-        vocab = model.wv.vocab  # Vocabulary
+        # vocab = model.wv.vocab  # Vocabulary
+        # See https://stackoverflow.com/questions/66868221/gensim-3-8-0-to-gensim-4-0-0
+        vocab = list(model.wv.index_to_key)
         #self.dim = dim * len(self.header_categorical)
         # print("dim is", self.dim)
         # print(model["citylondon"])

@@ -20,9 +20,12 @@ import unittest
 
 from dbestclient.executor.executor import SqlExecutor
 
+from pathlib import Path
+
 
 class TestTpcDs(unittest.TestCase):
 
+    # NO SUCH DIRECTORY ERROR 'dbestwarehouse//data/tpcds/40G/ss_600k.csv'
     # def test_simple_model(self):
     #     sqlExecutor = SqlExecutor()
     #     sqlExecutor.execute("set n_epoch=10")
@@ -45,6 +48,7 @@ class TestTpcDs(unittest.TestCase):
     #     self.assertTrue(predictions)
 
     def test_groupbys_range_no_categorical_gb2(self):
+        print('---------------------test_groupbys_range_no_categorical_gb2')
         sqlExecutor = SqlExecutor()
         sqlExecutor.execute("set b_grid_search='False'")
         sqlExecutor.execute("set csv_split_char='|'")
@@ -66,9 +70,10 @@ class TestTpcDs(unittest.TestCase):
             "select avg(ss_sales_price)  from test_ss40g_groupbys_range_no_categorical_gb2 where   2451119  <=ss_sold_date_sk<= 2451483  group by ss_store_sk,ss_coupon_amt"
         )
         sqlExecutor.execute("drop table test_ss40g_groupbys_range_no_categorical_gb2")
-        self.assertFalse(predictions.empty)
+        self.assertFalse(len(predictions) == 0)
 
     def test_groupbys_range_no_categorical_gb1(self):
+        print('---------------------test_groupbys_range_no_categorical_gb1')
         sqlExecutor = SqlExecutor()
         sqlExecutor.execute("set b_grid_search='False'")
         sqlExecutor.execute("set csv_split_char='|'")
@@ -90,9 +95,10 @@ class TestTpcDs(unittest.TestCase):
             "select avg(ss_sales_price)  from test_ss40g_groupbys_range_no_categorical_gb1 where   2451119  <=ss_sold_date_sk<= 2451483  group by ss_store_sk"
         )
         sqlExecutor.execute("drop table test_ss40g_groupbys_range_no_categorical_gb1")
-        self.assertFalse(predictions.empty)
+        self.assertFalse(len(predictions) == 0)
 
     def test_groupbys_range_no_categorical_gb1_stratified(self):
+        print('---------------------test_groupbys_range_no_categorical_gb1_stratified')
         sqlExecutor = SqlExecutor()
         sqlExecutor.execute("set b_grid_search='False'")
         sqlExecutor.execute("set csv_split_char='|'")
@@ -114,9 +120,10 @@ class TestTpcDs(unittest.TestCase):
             "select avg(ss_sales_price)  from test_ss40g_groupbys_range_no_categorical where   2451119  <=ss_sold_date_sk<= 2451483  group by ss_store_sk"
         )  # ss_coupon_amt
         sqlExecutor.execute("drop table test_ss40g_groupbys_range_no_categorical")
-        self.assertFalse(predictions.empty)
+        self.assertFalse(len(predictions) == 0)
 
     def test_groupbys_range_no_categorical_gb2_stratified(self):
+        print('---------------------test_groupbys_range_no_categorical_gb2_stratified')
         sqlExecutor = SqlExecutor()
         sqlExecutor.execute("set b_grid_search='False'")
         sqlExecutor.execute("set csv_split_char='|'")
@@ -142,9 +149,10 @@ class TestTpcDs(unittest.TestCase):
         sqlExecutor.execute(
             "drop table test_ss40g_groupbys_range_no_categorical_gb2_stratified"
         )
-        self.assertFalse(predictions.empty)
+        self.assertFalse(len(predictions) == 0)
     
     def test_groupbys_range_no_categorical_gb2_stratified_sample_only(self):
+        print('---------------------test_groupbys_range_no_categorical_gb2_stratified_sample_only')
         sqlExecutor = SqlExecutor()
         sqlExecutor.execute("set b_grid_search='False'")
         sqlExecutor.execute("set csv_split_char='|'")
@@ -176,28 +184,31 @@ class TestTpcDs(unittest.TestCase):
         sqlExecutor.execute(
             "drop table test_ss40g_groupbys_range_no_categorical_gb2_stratified"
         )
-        # self.assertFalse(predictions.empty)
+        # self.assertFalse(len(predictions) == 0)
 
-    # def test_categorical(self):
-    #     sqlExecutor = SqlExecutor()
-    #     sqlExecutor.execute("set b_grid_search='False'")
-    #     sqlExecutor.execute("set csv_split_char='|'")
-    # sqlExecutor.execute("set n_epoch=2")
-    #     sqlExecutor.execute("set table_header=" +
-    #                         "'ss_sold_date_sk|ss_sold_time_sk|ss_item_sk|ss_customer_sk|ss_cdemo_sk|ss_hdemo_sk|" +
-    #                         "ss_addr_sk|ss_store_sk|ss_promo_sk|ss_ticket_number|ss_quantity|ss_wholesale_cost|" +
-    #                         "ss_list_price|ss_sales_price|ss_ext_discount_amt|ss_ext_sales_price|" +
-    #                         "ss_ext_wholesale_cost|ss_ext_list_price|ss_ext_tax|ss_coupon_amt|ss_net_paid|" +
-    #                         "ss_net_paid_inc_tax|ss_net_profit|none'"
-    #                         )
-    #     sqlExecutor.execute(
-    #         "create table test_ss40g_categorical(ss_sales_price real, ss_sold_date_sk real, ss_coupon_amt categorical) from 'data/tpcds/40G/ss_1k.csv' GROUP BY ss_store_sk method uniform size 1000")
-    #     predictions = sqlExecutor.execute(
-    #         "select avg(ss_sales_price)  from test_ss40g_categorical where   2451119  <=ss_sold_date_sk<= 2451483 and ss_coupon_amt=''  group by ss_store_sk")
-    #     sqlExecutor.execute("drop table test_ss40g_categorical")
-    #     self.assertTrue(predictions)
+    def test_categorical(self):
+        sqlExecutor = SqlExecutor()
+        sqlExecutor.execute("set b_grid_search='False'")
+        sqlExecutor.execute("set csv_split_char='|'")
+        sqlExecutor.execute("set n_epoch=2")
+        sqlExecutor.execute("set table_header=" +
+                            "'ss_sold_date_sk|ss_sold_time_sk|ss_item_sk|ss_customer_sk|ss_cdemo_sk|ss_hdemo_sk|" +
+                            "ss_addr_sk|ss_store_sk|ss_promo_sk|ss_ticket_number|ss_quantity|ss_wholesale_cost|" +
+                            "ss_list_price|ss_sales_price|ss_ext_discount_amt|ss_ext_sales_price|" +
+                            "ss_ext_wholesale_cost|ss_ext_list_price|ss_ext_tax|ss_coupon_amt|ss_net_paid|" +
+                            "ss_net_paid_inc_tax|ss_net_profit|none'"
+                            )
+        sqlExecutor.execute(
+            "create table test_ss40g_categorical(ss_sales_price real, ss_sold_date_sk real, ss_coupon_amt categorical) from 'data/tpcds/40G/ss_1k.csv' GROUP BY ss_store_sk method uniform size 1000")
+        predictions = sqlExecutor.execute(
+            "select avg(ss_sales_price)  from test_ss40g_categorical where   2451119  <=ss_sold_date_sk<= 2451483 and ss_coupon_amt=''  group by ss_store_sk")
+        sqlExecutor.execute("drop table test_ss40g_categorical")
+        self.assertFalse(predictions.empty)
 
     def test_categorical_one_model(self):
+        print('---------------------test_categorical_one_model')
+        print("File      Path:", Path(__file__).absolute())
+        print("Directory Path:", Path().absolute()) # Directory of current working directory, not __file__  
         sqlExecutor = SqlExecutor()
         sqlExecutor.execute("set b_grid_search='False'")
         sqlExecutor.execute("set csv_split_char='|'")
@@ -220,9 +231,10 @@ class TestTpcDs(unittest.TestCase):
             "select count(ss_sales_price)  from test_ss40g_categorical_one_model where   2451119  <=ss_sold_date_sk<= 2451483 and ss_coupon_amt='0.00'   group by ss_store_sk"
         )  # and ss_ext_discount_amt='0.00'
         sqlExecutor.execute("drop table test_ss40g_categorical_one_model")
-        self.assertFalse(predictions.empty)
+        self.assertFalse(len(predictions) == 0)
 
     def test_categorical_one_model_stratified(self):
+        print('---------------------test_categorical_one_model_stratified')
         sqlExecutor = SqlExecutor()
         sqlExecutor.execute("set b_grid_search='False'")
         sqlExecutor.execute("set csv_split_char='|'")
@@ -245,28 +257,29 @@ class TestTpcDs(unittest.TestCase):
             "select count(ss_sales_price)  from test_ss40g_categorical_one_model_stratified where   2451119  <=ss_sold_date_sk<= 2451483 and ss_coupon_amt='18.56'   group by ss_store_sk"
         )  # 18.56
         sqlExecutor.execute("drop table test_ss40g_categorical_one_model_stratified")
-        self.assertFalse(predictions.empty)
+        self.assertFalse(len(predictions) == 0)
 
-    # def test_gogs_no_categorical(self):
-    #     sqlExecutor = SqlExecutor()
-    #     sqlExecutor.execute("set b_grid_search='False'")
-    #     sqlExecutor.execute("set b_use_gg='True'")
-    #     sqlExecutor.execute("set n_per_gg=10")
-    #     sqlExecutor.execute("set csv_split_char='|'")
-    #     sqlExecutor.execute("set table_header=" +
-    #                         "'ss_sold_date_sk|ss_sold_time_sk|ss_item_sk|ss_customer_sk|ss_cdemo_sk|ss_hdemo_sk|" +
-    #                         "ss_addr_sk|ss_store_sk|ss_promo_sk|ss_ticket_number|ss_quantity|ss_wholesale_cost|" +
-    #                         "ss_list_price|ss_sales_price|ss_ext_discount_amt|ss_ext_sales_price|" +
-    #                         "ss_ext_wholesale_cost|ss_ext_list_price|ss_ext_tax|ss_coupon_amt|ss_net_paid|" +
-    #                         "ss_net_paid_inc_tax|ss_net_profit|none'"
-    #                         )
-    #     sqlExecutor.execute(
-    #         "create table test_ss40g_gogs_no_categorical(ss_sales_price real, ss_sold_date_sk real) from 'data/tpcds/40G/ss_100.csv' GROUP BY ss_store_sk method uniform size 100")
-    #     predictions = sqlExecutor.execute(
-    #         "select avg(ss_sales_price)  from test_ss40g_gogs_no_categorical where   2451119  <=ss_sold_date_sk<= 2451483  group by ss_store_sk")
-    #     sqlExecutor.execute("drop table test_ss40g_gogs_no_categorical")
-    #     self.assertFalse(predictions.empty)
+    def test_gogs_no_categorical(self):
+        sqlExecutor = SqlExecutor()
+        sqlExecutor.execute("set b_grid_search='False'")
+        sqlExecutor.execute("set b_use_gg='True'")
+        sqlExecutor.execute("set n_per_gg=10")
+        sqlExecutor.execute("set csv_split_char='|'")
+        sqlExecutor.execute("set table_header=" +
+                            "'ss_sold_date_sk|ss_sold_time_sk|ss_item_sk|ss_customer_sk|ss_cdemo_sk|ss_hdemo_sk|" +
+                            "ss_addr_sk|ss_store_sk|ss_promo_sk|ss_ticket_number|ss_quantity|ss_wholesale_cost|" +
+                            "ss_list_price|ss_sales_price|ss_ext_discount_amt|ss_ext_sales_price|" +
+                            "ss_ext_wholesale_cost|ss_ext_list_price|ss_ext_tax|ss_coupon_amt|ss_net_paid|" +
+                            "ss_net_paid_inc_tax|ss_net_profit|none'"
+                            )
+        sqlExecutor.execute(
+            "create table test_ss40g_gogs_no_categorical(ss_sales_price real, ss_sold_date_sk real) from 'data/tpcds/40G/ss_100.csv' GROUP BY ss_store_sk method uniform size 100")
+        predictions = sqlExecutor.execute(
+            "select avg(ss_sales_price)  from test_ss40g_gogs_no_categorical where   2451119  <=ss_sold_date_sk<= 2451483  group by ss_store_sk")
+        sqlExecutor.execute("drop table test_ss40g_gogs_no_categorical")
+        self.assertFalse(len(predictions) == 0)
 
+    # RUNNING INTO b_use_gg METHOD NOT IMPLEMENTED ERROR
     # def test_gogs_categorical(self):
     #     sqlExecutor = SqlExecutor()
     #     sqlExecutor.execute("set b_grid_search='False'")
@@ -286,14 +299,16 @@ class TestTpcDs(unittest.TestCase):
     #     predictions = sqlExecutor.execute(
     #         "select avg(ss_sales_price)  from test_ss40g_gogs_categorical where   2451119  <=ss_sold_date_sk<= 2451483 and ss_coupon_amt='' group by ss_store_sk")
     #     sqlExecutor.execute("drop table test_ss40g_gogs_categorical")
-    #     self.assertFalse(predictions.empty)
+    #     self.assertFalse(len(predictions) == 0)
 
     def test_drop_clause(self):
+        print('---------------------test_drop_clause')
         sqlExecutor = SqlExecutor()
         status = sqlExecutor.execute("drop table model2drop")
         self.assertFalse(status)
 
     def test_embedding(self):
+        print('---------------------test_embedding')
         sqlExecutor = SqlExecutor()
         sqlExecutor.execute("set b_grid_search='False'")
         sqlExecutor.execute("set csv_split_char='|'")
@@ -314,13 +329,14 @@ class TestTpcDs(unittest.TestCase):
             "select avg(ss_sales_price)  from test_ss40g_embedding where   2451119  <=ss_sold_date_sk<= 2451483  group by ss_store_sk"
         )
         sqlExecutor.execute("drop table test_ss40g_embedding")
-        self.assertFalse(predictions.empty)
+        self.assertFalse(len(predictions) == 0)
 
+    # ERROR: 916 grouper.py: No Group Keys passed
     # def test_no_continuous(self):
     #     sqlExecutor = SqlExecutor()
     #     sqlExecutor.execute("set b_grid_search='False'")
     #     sqlExecutor.execute("set csv_split_char='|'")
-    # sqlExecutor.execute("set n_epoch=2")
+    #     sqlExecutor.execute("set n_epoch=2")
     #     sqlExecutor.execute("set encoder='binary'")
     #     sqlExecutor.execute("set table_header=" +
     #                         "'ss_sold_date_sk|ss_sold_time_sk|ss_item_sk|ss_customer_sk|ss_cdemo_sk|ss_hdemo_sk|" +
@@ -338,6 +354,7 @@ class TestTpcDs(unittest.TestCase):
     #     self.assertTrue(True)
 
     def test_no_continuous_categorical_1(self):
+        print('---------------------test_no_continuous_categorical_1')
         sqlExecutor = SqlExecutor()
         sqlExecutor.execute("set b_grid_search='False'")
         sqlExecutor.execute("set csv_split_char='|'")
@@ -362,6 +379,7 @@ class TestTpcDs(unittest.TestCase):
         self.assertFalse(results.empty)
 
     def test_no_continuous_categorical_2(self):
+        print('---------------------test_no_continuous_categorical_2')
         sqlExecutor = SqlExecutor()
         sqlExecutor.execute("set b_grid_search='False'")
         sqlExecutor.execute("set csv_split_char='|'")
@@ -386,6 +404,7 @@ class TestTpcDs(unittest.TestCase):
         self.assertFalse(results.empty)
 
     def test_no_continuous_categorical_one_model_uniform(self):
+        print('---------------------test_no_continuous_categorical_one_model_uniform')
         sqlExecutor = SqlExecutor()
         sqlExecutor.execute("set b_grid_search='False'")
         sqlExecutor.execute("set csv_split_char='|'")
@@ -411,6 +430,7 @@ class TestTpcDs(unittest.TestCase):
         self.assertFalse(results.empty)
 
     def test_no_continuous_categorical1_one_model_stratified(self):
+        print('---------------------test_no_continuous_categorical1_one_model_stratified')
         sqlExecutor = SqlExecutor()
         sqlExecutor.execute("set b_grid_search='False'")
         sqlExecutor.execute("set csv_split_char='|'")
@@ -440,6 +460,7 @@ class TestTpcDs(unittest.TestCase):
         self.assertFalse(results.empty)
 
     def test_no_continuous_categorical2_one_model_stratified(self):
+        print('---------------------test_no_continuous_categorical2_one_model_stratified')
         sqlExecutor = SqlExecutor()
         sqlExecutor.execute("set b_grid_search='False'")
         sqlExecutor.execute("set csv_split_char='|'")
@@ -468,51 +489,54 @@ class TestTpcDs(unittest.TestCase):
         )
         self.assertFalse(results.empty)
 
-    def test_plot(self):
-        sqlExecutor = SqlExecutor()
-        sqlExecutor.execute("set b_grid_search='False'")
-        sqlExecutor.execute("set csv_split_char='|'")
-        sqlExecutor.execute("set n_epoch=40")
-        sqlExecutor.execute("set encoder='embedding'")
-        sqlExecutor.execute("set one_model='true'")
-        sqlExecutor.execute("set plot='True'")
-        sqlExecutor.execute(
-            "set table_header="
-            + "'ss_sold_date_sk|ss_sold_time_sk|ss_item_sk|ss_customer_sk|ss_cdemo_sk|ss_hdemo_sk|"
-            + "ss_addr_sk|ss_store_sk|ss_promo_sk|ss_ticket_number|ss_quantity|ss_wholesale_cost|"
-            + "ss_list_price|ss_sales_price|ss_ext_discount_amt|ss_ext_sales_price|"
-            + "ss_ext_wholesale_cost|ss_ext_list_price|ss_ext_tax|ss_coupon_amt|ss_net_paid|"
-            + "ss_net_paid_inc_tax|ss_net_profit|none'"
-        )
-        sqlExecutor.execute("drop table test_plot")
-        sqlExecutor.execute(
-            "create table test_plot(ss_sales_price real, ss_sold_date_sk real) from '/home/quincy/Documents/workspace/data/tpcds/100g/ss_100g_2m.csv' GROUP BY ss_store_sk method uniform size 2000"  #data/tpcds/10g/ss_10g_100.csv
-        )
-        results = sqlExecutor.execute(
-            "select ss_store_sk, sum(ss_sales_price)  from test_plot where 2451119  <=ss_sold_date_sk<= 2451483  group by ss_store_sk"
-        )
-        sqlExecutor.execute("drop table test_plot")
-        self.assertFalse(results.empty)
+    # [Errno 2] No such file or directory: 'dbestwarehouse//home/quincy/Documents/workspace/data/tpcds/100g/ss_100g_2m.csv'
+    # def test_plot(self):
+    #     print('---------------------test_plot')
+    #     sqlExecutor = SqlExecutor()
+    #     sqlExecutor.execute("set b_grid_search='False'")
+    #     sqlExecutor.execute("set csv_split_char='|'")
+    #     sqlExecutor.execute("set n_epoch=40")
+    #     sqlExecutor.execute("set encoder='embedding'")
+    #     sqlExecutor.execute("set one_model='true'")
+    #     sqlExecutor.execute("set plot='True'")
+    #     sqlExecutor.execute(
+    #         "set table_header="
+    #         + "'ss_sold_date_sk|ss_sold_time_sk|ss_item_sk|ss_customer_sk|ss_cdemo_sk|ss_hdemo_sk|"
+    #         + "ss_addr_sk|ss_store_sk|ss_promo_sk|ss_ticket_number|ss_quantity|ss_wholesale_cost|"
+    #         + "ss_list_price|ss_sales_price|ss_ext_discount_amt|ss_ext_sales_price|"
+    #         + "ss_ext_wholesale_cost|ss_ext_list_price|ss_ext_tax|ss_coupon_amt|ss_net_paid|"
+    #         + "ss_net_paid_inc_tax|ss_net_profit|none'"
+    #     )
+    #     sqlExecutor.execute("drop table test_plot")
+    #     sqlExecutor.execute(
+    #         "create table test_plot(ss_sales_price real, ss_sold_date_sk real) from '/home/quincy/Documents/workspace/data/tpcds/100g/ss_100g_2m.csv' GROUP BY ss_store_sk method uniform size 2000"  #data/tpcds/10g/ss_10g_100.csv
+    #     )
+    #     results = sqlExecutor.execute(
+    #         "select ss_store_sk, sum(ss_sales_price)  from test_plot where 2451119  <=ss_sold_date_sk<= 2451483  group by ss_store_sk"
+    #     )
+    #     sqlExecutor.execute("drop table test_plot")
+    #     self.assertFalse(results.empty)
 
-    def test_memory(self):
-        from guppy import hpy
-        h = hpy()
+    # def test_memory(self):
+    #     print('---------------------test_memory')
+    #     from guppy import hpy
+    #     h = hpy()
 
 
-        sqlExecutor = SqlExecutor()
-        print(h.heap())
+    #     sqlExecutor = SqlExecutor()
+    #     print(h.heap())
 
-        # sqlExecutor.execute(
-        #     "select ss_store_sk, sum(ss_sales_price)  from plot1 where 2451119  <=ss_sold_date_sk<= 2451483  group by ss_store_sk"
-        # )
-        # print(h.heap())
+    #     # sqlExecutor.execute(
+    #     #     "select ss_store_sk, sum(ss_sales_price)  from plot1 where 2451119  <=ss_sold_date_sk<= 2451483  group by ss_store_sk"
+    #     # )
+    #     # print(h.heap())
 
-        # sqlExecutor.execute("show tables")
-        sqlExecutor.execute("drop table plot1")
+    #     # sqlExecutor.execute("show tables")
+    #     sqlExecutor.execute("drop table plot1")
 
-        print(h.heap())
+    #     print(h.heap())
 
-        self.assertTrue(h.heap())
+    #     self.assertTrue(h.heap())
 
 
 
